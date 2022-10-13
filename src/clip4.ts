@@ -50,7 +50,7 @@ const list:() => string = () => {
 
 
 const app = document.getElementById('app');
-console.log(app)
+
 if (app != null) {
    app.innerHTML = `
         <h1>장바구니</h1>

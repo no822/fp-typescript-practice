@@ -1,4 +1,4 @@
-import "./clip4.ts";
+import "./clip7.ts";
 
 function component() {
     var element = document.createElement("div");
