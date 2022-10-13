@@ -17,23 +17,22 @@ import './index.css';
 // 4. totalCalculator에서 포문 대신에 배열 메소드 사용
 
 const stockItem:(i: Item) => string = (i) => {
-    return `
-        <li>
+    return (
+        `<li>
             <h1>${i.name}</h1>
             <div>가격: ${i.price}원</div>
             <div>수량: ${i.quantity} 상자</div>
-        </li>
-    `;
+        </li>`);
 };
 
 const outOfStockItem:(i: Item) => string = (i) => {
-    return `
-        <li class="gray">
+    return (
+        `<li class="gray">
             <h1>${i.name}</h1>
             <div class="strike">가격: ${i.price}원</div>
-            <div class="strike">수량: ${i.quantity} 상자</div>
-        </li>
-    `;
+            <div class="strike">수량: ${i.quantity}상자</div>
+        </li>`
+    );
 };
 
 const item:(i: Item) => string = (i) => {
@@ -61,24 +60,19 @@ const totalCalculator:(list: Array<Item>, f:(i: Item) => number) => number = (li
 
 
 const list:(list: Array<Item>) => string = (list) => {
-    let html = '<ul>';
-    for (let i=0; i<list.length; i++) {
-        html += item(list[i])
-    }
-    html += '</ul>';
+    return `<ul>
+            ${list.map(item).reduce((tags, tag) => tags + tag, "")}       
+        </ul>`;
 
-    html += totalPrice(list);
-    html += totalCount(list);
-
-    return html;
 }
 
 
 const app = document.getElementById('app');
 
 if (app != null) {
-    app.innerHTML = `
-        <h1>장바구니</h1>
+    app.innerHTML =
+        `<h1>장바구니</h1>
         ${list(cart)}
-   `;
+        ${totalPrice(cart)}
+        ${totalCount(cart)}`;
 }
