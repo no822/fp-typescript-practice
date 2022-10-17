@@ -9,15 +9,15 @@ import './index.css';
 // todo 2. 같은 로직을 좀더 함수형으로 구현
     // 2.1 함수 쪼개기(stockItem, outOfStockItem, Item, totalPrice, totalCount 함수들..) ✔
     // 2.2 반복문 대신의 map, filter 등의 메소드 활용 ✓
-    // 2.3 totalPrice와 totalCount함수에서 공통적인 로직을 함수인자로 받도록 변경(totalCalculator) ✔
-    // 2.4 cart를 묵시적입력에서 명시적 입력값으로 받도록 수정 ✓
+    // 2.3 totalPrice 와 totalCount 함수에서 공통적인 로직을 함수인자로 받도록 변경(totalCalculator) ✔
+    // 2.4 cart 를 묵시적입력에서 명시적 입력값으로 받도록 수정 ✓
 // todo 3. option 타입 추가(+ cart 배열에 discountPrice 추가) ✓
 // todo 4. 3에 추가한 값에 대한 처리 추가
     // 4.1 각 상품마다 할인가격 표시, 할인된 가격을 각 상품가격에 적용 ✓
     // 4.2 전체가격에서 총 할인가 표시, 할인된 가격을 전체가격에 적용 ✓
 // todo 5. 조건문을 사용하지 않고 Option<A> 타입 사용하도록 변경하기 ✓
     // 5.1 fromUndefined 함수를 사용해서 값을 옵션타입으로 치환?
-    // 5.2 getOrElse 함수에 옵션타입의 값과 defaultValue를 넘겨주어서 discountPrice 프로퍼티가 없는 경우에도 값을 가지도록 변경
+    // 5.2 getOrElse 함수에 옵션타입의 값과 defaultValue 를 넘겨주어서 discountPrice 프로퍼티가 없는 경우에도 값을 가지도록 변경
 
 
 const stockItem = (a: Item): string => {
@@ -79,16 +79,13 @@ const totalCount = (list: Array<Item>): string => {
 };
 
 const list = (list: Array<Item>): string => {
-    const html =
-        `<ul>
-            ${list
-                .map(item)
-                .reduce((tags, tag) => tags + tag, "")
-            }
-        </ul>`;
-    return html;
+    return `<ul>
+        ${list
+            .map(item)
+            .reduce((tags, tag) => tags + tag, "")
+        }
+    </ul>`;
 };
-
 
 const main = () => {
     const app = document.querySelector('#app');
