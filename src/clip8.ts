@@ -1,7 +1,6 @@
 import { cart, Item } from './cart';
 import * as O from './option'
 import './index.css';
-import {fromUndefined} from "./option";
 
 // todo 1. 장바구니 데이터 렌더링 복습(cart.ts 파일만 보고 구현해보기)
     // 1.1 요구사항1: cart 배열에 담긴 각 상품 정보를 렌더링(상품명, 가격, 재고) ✓
@@ -16,7 +15,7 @@ import {fromUndefined} from "./option";
 // todo 4. 3에 추가한 값에 대한 처리 추가
     // 4.1 각 상품마다 할인가격 표시, 할인된 가격을 각 상품가격에 적용 ✓
     // 4.2 전체가격에서 총 할인가 표시, 할인된 가격을 전체가격에 적용 ✓
-// todo 5. 조건문을 사용하지 않고 Option<A> 타입 사용하도록 변경하기
+// todo 5. 조건문을 사용하지 않고 Option<A> 타입 사용하도록 변경하기 ✓
     // 5.1 fromUndefined 함수를 사용해서 값을 옵션타입으로 치환?
     // 5.2 getOrElse 함수에 옵션타입의 값과 defaultValue를 넘겨주어서 discountPrice 프로퍼티가 없는 경우에도 값을 가지도록 변경
 
@@ -24,11 +23,8 @@ import {fromUndefined} from "./option";
 const stockItem = (a: Item): string => {
     const optionDiscountPrice = O.fromUndefined(a.discountPrice);
     const discountPrice = O.getOrElse(optionDiscountPrice, 0);
-
-    let saleText = '';
-    if (O.isSome(optionDiscountPrice)) {
-        saleText = `(${discountPrice}원 할인)`;
-    }
+    const optionSaleText = O.map(optionDiscountPrice, (value) => `(${value}원 할인)`)
+    const saleText = O.getOrElse(optionSaleText, '');
     return `
         <li>
             <h1>${a.name}</h1>
@@ -60,7 +56,7 @@ const totalCalculator = (list: Array<Item>, getValue:(a: Item) => number) => {
    let result: Array<number> = [];
    list.forEach(item => {
        if (item.outOfStock === false) {
-           result.push(getValue(item))
+           result.push(getValue(item));
        }
    })
    return result.reduce((total, value) => total + value, 0);
@@ -69,23 +65,21 @@ const totalCalculator = (list: Array<Item>, getValue:(a: Item) => number) => {
 const totalPrice = (list: Array<Item>): string => {
     const price = totalCalculator(list, (i) => i.price * i.quantity)
     const totalDiscountPrice = totalCalculator(list, (i) => {
-        let discountPrice = 0;
-        if (i.discountPrice !== undefined) {
-           discountPrice = i.discountPrice;
-        }
+        const discountPrice = O.getOrElse(O.fromUndefined(i.discountPrice), 0);
         return discountPrice * i.quantity;
     });
-
-    return `<h1>전체가격: ${price - totalDiscountPrice}원 (총 ${totalDiscountPrice}원 할인)</h1>`;
+    const optionDiscountText = O.map(O.fromUndefined(totalDiscountPrice), (value) => `(총 ${value}원 할인)`);
+    const discountText = O.getOrElse(optionDiscountText, "");
+    return `<h1>전체가격: ${price - totalDiscountPrice}원 ${discountText}</h1>`;
 };
 
 const totalCount = (list: Array<Item>): string => {
-    let count = totalCalculator(list, (i) => i.quantity);
+    const count = totalCalculator(list, (i) => i.quantity);
     return `<h1>전체수량: ${count}상자<h1>`;
 };
 
 const list = (list: Array<Item>): string => {
-    let html =
+    const html =
         `<ul>
             ${list
                 .map(item)
