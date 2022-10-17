@@ -1,5 +1,8 @@
 import { cart, Item } from './cart';
+import * as O from './option'
 import './index.css';
+import {fromUndefined} from "./option";
+
 // todo 1. 장바구니 데이터 렌더링 복습(cart.ts 파일만 보고 구현해보기)
     // 1.1 요구사항1: cart 배열에 담긴 각 상품 정보를 렌더링(상품명, 가격, 재고) ✓
     // 1.2 요구사항2: 전체가격, 전체갯수 렌더링 ✓
@@ -9,13 +12,27 @@ import './index.css';
     // 2.2 반복문 대신의 map, filter 등의 메소드 활용 ✓
     // 2.3 totalPrice와 totalCount함수에서 공통적인 로직을 함수인자로 받도록 변경(totalCalculator) ✔
     // 2.4 cart를 묵시적입력에서 명시적 입력값으로 받도록 수정 ✓
+// todo 3. option 타입 추가(+ cart 배열에 discountPrice 추가) ✓
+// todo 4. 3에 추가한 값에 대한 처리 추가
+    // 4.1 각 상품마다 할인가격 표시, 할인된 가격을 각 상품가격에 적용 ✓
+    // 4.2 전체가격에서 총 할인가 표시, 할인된 가격을 전체가격에 적용 ✓
+// todo 5. 조건문을 사용하지 않고 Option<A> 타입 사용하도록 변경하기
+    // 5.1 fromUndefined 함수를 사용해서 값을 옵션타입으로 치환?
+    // 5.2 getOrElse 함수에 옵션타입의 값과 defaultValue를 넘겨주어서 discountPrice 프로퍼티가 없는 경우에도 값을 가지도록 변경
 
 
 const stockItem = (a: Item): string => {
+    const optionDiscountPrice = O.fromUndefined(a.discountPrice);
+    const discountPrice = O.getOrElse(optionDiscountPrice, 0);
+
+    let saleText = '';
+    if (O.isSome(optionDiscountPrice)) {
+        saleText = `(${discountPrice}원 할인)`;
+    }
     return `
         <li>
             <h1>${a.name}</h1>
-            <div>가격: ${a.price}원</div>
+            <div>가격: ${a.price - discountPrice}원 ${saleText} </div>
             <div>수량: ${a.quantity}상자</divl>
         </li>   
     `;
@@ -50,8 +67,16 @@ const totalCalculator = (list: Array<Item>, getValue:(a: Item) => number) => {
 };
 
 const totalPrice = (list: Array<Item>): string => {
-    let price = totalCalculator(list, (i) => i.price * i.quantity)
-    return `<h1>전체가격: ${price}원</h1>`;
+    const price = totalCalculator(list, (i) => i.price * i.quantity)
+    const totalDiscountPrice = totalCalculator(list, (i) => {
+        let discountPrice = 0;
+        if (i.discountPrice !== undefined) {
+           discountPrice = i.discountPrice;
+        }
+        return discountPrice * i.quantity;
+    });
+
+    return `<h1>전체가격: ${price - totalDiscountPrice}원 (총 ${totalDiscountPrice}원 할인)</h1>`;
 };
 
 const totalCount = (list: Array<Item>): string => {
@@ -83,7 +108,3 @@ const main = () => {
 };
 
 main();
-
-// todo 3. 장바구니 데이터에 discountPrice? 추가
-// todo 4. 2에 추가한 값에 대한 처리 추가(조건문 사용)
-// todo 5. 조건문을 사용하지 않고 Option<A> 타입 사용하도록 변경하기
