@@ -22,6 +22,7 @@ const list:() => string = () => {
             html += `<div class="strike">가격: ${cart[i].price} 원</div>`
             html += `<div class="strike">수량: ${cart[i].quantity} 상자</div>`
             html += '</li>';
+
         }
     }
     html += '</ul>';

@@ -14,7 +14,7 @@ import './index.css';
 
 // 3. item을 묵시적입력값으로 사용하지 말고 명시적인 인자로 넣어줄 것 ✓
 
-// 4. totalCalculator에서 포문 대신에 배열 메소드 사용
+// 4. totalCalculator에서 포문 대신에 배열 메소드 사용 ✓
 
 const stockItem:(i: Item) => string = (i) => {
     return (
@@ -63,8 +63,7 @@ const list:(list: Array<Item>) => string = (list) => {
     return `<ul>
             ${list.map(item).reduce((tags, tag) => tags + tag, "")}       
         </ul>`;
-
-}
+};
 
 
 const app = document.getElementById('app');
