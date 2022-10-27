@@ -16,7 +16,7 @@ export const isSome = <A>(oa: Option<A>) => oa._tag === 'Some';
 export const isNone = <A>(oa: Option<A>): oa is None => oa._tag === 'None';
 
 export const fromUndefined = <A>(value: A | undefined): Option<A> => {
-   if (value === undefined) {
+   if (!value) {
        return none();
    }
    return some(value);
@@ -33,3 +33,8 @@ export const map = <A, B>(oa: Option<A>, f:(a: A) => B): Option<B> => {
    if (isNone(oa)) return oa;
    return some(f(oa.value));
 };
+
+// todo mapOrElse 구현 연습
+export const mapOrElse = <A, B>(oa: Option<A>, f:(a: A) => B, defaultValue: B): B => {
+   return getOrElse(map(oa, f), defaultValue);
+}
